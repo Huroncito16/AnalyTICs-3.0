@@ -170,40 +170,9 @@ function mostrarResultados(resultados) {
 function mostrarResultadosRR(resultado) {
   const output = document.getElementById("resultsOutput");
   if (!output) return;
-  // Obtener nombres únicos de procesos
-  const nombres = processes.map((p) => p.name);
-  // Crear estructura de rondas
-  let rondas = [];
-  let tiempos = processes.map((p) => p.time);
-  let terminado = (procesos) => procesos.every((t) => t <= 0);
-  let quantumInput = document.getElementById("quantumInput");
-  let quantum = quantumInput ? parseInt(quantumInput.value) : 1;
-  let tiemposActuales = [...tiempos];
-  while (!terminado(tiemposActuales)) {
-    let ronda = [];
-    for (let i = 0; i < tiemposActuales.length; i++) {
-      if (tiemposActuales[i] > 0) {
-        let usado = Math.min(quantum, tiemposActuales[i]);
-        tiemposActuales[i] -= usado;
-        ronda.push(tiemposActuales[i]);
-      } else {
-        ronda.push(0);
-      }
-    }
-    rondas.push([...ronda]);
-  }
-  // Construir tabla
-  let html = `<h3>Round Robin</h3><table border='1'><tr><th>Ronda</th>`;
-  nombres.forEach((n) => {
-    html += `<th>${n}</th>`;
-  });
-  html += `</tr>`;
-  rondas.forEach((ronda, idx) => {
-    html += `<tr><td>${idx + 1}</td>`;
-    ronda.forEach((tiempo) => {
-      html += `<td>${tiempo}</td>`;
-    });
-    html += `</tr>`;
+  let html = `<h3>Round Robin</h3><table border='1' class='result-table'><tr><th>No.</th><th>Nombre</th><th>Tiempo</th><th>tiempo de ejecucio</th><th>Tiempo Restante</th><th>Prioridad</th><th>Tiempo de Espera</th></tr>`;
+  resultado.historial.forEach((r) => {
+    html += `<tr><td>${r.ronda}</td><td>${r.nombre}</td><td>${r.tiempoAntes}</td><td>${r.usado}</td><td>${r.tiempoDespues}</td><td>${r.prioridad}</td><td>${r.espera}</td></tr>`;
   });
   html += `</table><p>Promedio espera: <b>${resultado.promedio.toFixed(
     2
@@ -213,28 +182,50 @@ function mostrarResultadosRR(resultado) {
 
 // RR se mantiene aparte y se recalcula solo cuando el usuario lo solicita
 function RR(quantum) {
-  let arrayRR = [];
-  let arrayRRaux = [...processes];
-  let arrayEspera = [0];
-  let esperaTotal = 0;
-  let counter = 0;
-  while (arrayRRaux.length > 0) {
-    // Evita acceder fuera de rango
-    if (counter >= arrayRRaux.length) counter = 0;
-    arrayRR.push({ ...arrayRRaux[counter] });
-    if (arrayRRaux[counter].time <= quantum) {
-      arrayEspera[arrayRR.length] =
-        arrayRRaux[counter].time + arrayEspera[arrayRR.length - 1];
-      esperaTotal += arrayEspera[arrayRR.length];
-      arrayRRaux.splice(counter, 1);
-      // Si eliminamos, no incrementamos counter
-    } else {
-      arrayRRaux[counter].time -= quantum;
-      arrayEspera[arrayRR.length] = quantum + arrayEspera[arrayRR.length - 1];
-      esperaTotal += arrayEspera[arrayRR.length];
-      counter++;
+  let arrayRRaux = processes.map((p) => ({ ...p }));
+  let historial = [];
+  let esperaAcumulada = Array(arrayRRaux.length).fill(0);
+  let rondaNum = 1;
+  let terminado = (arr) => arr.every((p) => p.time <= 0);
+  let ejecucionesPorProceso = Array(arrayRRaux.length).fill(0);
+  while (!terminado(arrayRRaux)) {
+    let activos = arrayRRaux.filter((p) => p.time > 0).length;
+    for (let i = 0; i < arrayRRaux.length; i++) {
+      if (arrayRRaux[i].time > 0) {
+        let tiempoAntes = arrayRRaux[i].time;
+        let usado = Math.min(quantum, arrayRRaux[i].time);
+        arrayRRaux[i].time -= usado;
+        ejecucionesPorProceso[i]++;
+        // Si solo queda un proceso, no acumula espera extra pero sí cuenta la ejecución
+        if (activos === 1) {
+          historial.push({
+            ronda: rondaNum,
+            nombre: arrayRRaux[i].name,
+            tiempoAntes,
+            usado,
+            tiempoDespues: arrayRRaux[i].time,
+            prioridad: arrayRRaux[i].priority,
+            espera: esperaAcumulada[i], // se mantiene igual
+          });
+        } else {
+          esperaAcumulada[i] += usado;
+          historial.push({
+            ronda: rondaNum,
+            nombre: arrayRRaux[i].name,
+            tiempoAntes,
+            usado,
+            tiempoDespues: arrayRRaux[i].time,
+            prioridad: arrayRRaux[i].priority,
+            espera: esperaAcumulada[i],
+          });
+        }
+        rondaNum++;
+      }
     }
   }
-  let promedioEspera = arrayRR.length > 0 ? esperaTotal / arrayRR.length : 0;
-  return { procesos: arrayRR, esperas: arrayEspera, promedio: promedioEspera };
+  // El promedio de espera se calcula sobre todas las ejecuciones, aunque la espera sea 0 en las últimas rondas
+  let sumaEspera = esperaAcumulada.reduce((a, b) => a + b, 0);
+  let totalEjecuciones = ejecucionesPorProceso.reduce((a, b) => a + b, 0);
+  let promedioEspera = totalEjecuciones > 0 ? sumaEspera / totalEjecuciones : 0;
+  return { historial, promedio: promedioEspera };
 }
