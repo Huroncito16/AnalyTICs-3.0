@@ -1,62 +1,100 @@
 <!DOCTYPE html>
 <html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Planificador de Procesos</title>
-    <link rel="stylesheet" href="css/style.css">
-</head>
-<body>
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
+  <body>
     <header>
-        <h1>Planificador de Procesos</h1>
+      <h1>Planificador de Procesos</h1>
     </header>
 
     <main>
-        <section aria-labelledby="form-heading">
-            <h2 id="form-heading">Agregar Nuevo Proceso</h2>
-            <form id="addProcessForm">
-                <div>
-                    <label for="processName">Nombre del Proceso:</label>
-                    <input type="text" id="processName" name="processName" required>
-                </div>
-                <div>
-                    <label for="processTime">Tiempo de Ejecución:</label>
-                    <input type="number" id="processTime" name="processTime" min="1" required>
-                </div>
-                <div>
-                    <label for="processPriority">Prioridad:</label>
-                    <input type="number" id="processPriority" name="processPriority" min="1" required>
-                </div>
-                <button type="submit" id="addButton">Agregar Proceso</button>
-            </form>
-        </section>
+      <section aria-labelledby="form-heading">
+        <h2 id="form-heading">Agregar Nuevo Proceso</h2>
+        <form id="addProcessForm">
+          <div>
+            <label for="processName">Nombre del Proceso:</label>
+            <input type="text" id="processName" name="processName" required />
+          </div>
+          <div>
+            <label for="processTime">Tiempo de Ejecución:</label>
+            <input
+              type="number"
+              id="processTime"
+              name="processTime"
+              min="1"
+              required
+            />
+          </div>
+          <div>
+            <label for="processPriority">Prioridad:</label>
+            <input
+              type="number"
+              id="processPriority"
+              name="processPriority"
+              min="1"
+              required
+            />
+          </div>
+          <button type="submit" id="addButton">Agregar Proceso</button>
+        </form>
+      </section>
 
-        <hr>
+      <hr />
 
-        <section aria-labelledby="summary-heading">
-            <h2 id="summary-heading">Resumen de Procesos</h2>
-            <div class="table-container">
-                <table id="processTable">
-                    <thead>
-                        <tr>
-                            <th>Nombre</th>
-                            <th>Tiempo</th>
-                            <th>Prioridad</th>
-                            <th>Acciones</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <!-- Las filas de procesos se insertarán aquí -->
-                    </tbody>
-                </table>
-            </div>
-        </section>
+      <section aria-labelledby="summary-heading">
+        <h2 id="summary-heading">Resumen de Procesos</h2>
+        <div class="table-container">
+          <table id="processTable">
+            <thead>
+              <tr>
+                <th>Nombre</th>
+                <th>Tiempo</th>
+                <th>Prioridad</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- Las filas de procesos se insertarán aquí -->
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <hr />
+
+      <section aria-labelledby="scheduling-heading">
+        <h2 id="scheduling-heading">Ejecutar Planificación</h2>
+        <div class="scheduling-controls">
+          <button id="calculateAllButton">
+            Calcular Planificaciones (FCFS, SJF, Prioridad)
+          </button>
+        </div>
+        <div class="rr-controls">
+          <h3>Round Robin</h3>
+          <label for="quantumInput">Quantum:</label>
+          <input type="number" id="quantumInput" value="2" min="1" />
+          <button id="rrButton">Calcular/Recalcular RR</button>
+        </div>
+      </section>
+
+      <hr />
+
+      <section aria-labelledby="results-heading">
+        <h2 id="results-heading">Resultados de la Planificación</h2>
+        <div id="resultsOutput">
+          <p>Seleccione un algoritmo para ver los resultados.</p>
+        </div>
+      </section>
     </main>
 
     <footer>
-        <p>Aplicación de Planificación de Procesos</p>
+      <p>Aplicación de Planificación de Procesos</p>
     </footer>
 
     <script src="js/main.js"></script>
-</body>
+  </body>
 </html>
