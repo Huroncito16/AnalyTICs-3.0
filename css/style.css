@@ -1,4 +1,149 @@
 /* Estilos generales */
 body {
     font-family: sans-serif;
+    line-height: 1.6;
+    margin: 20px;
+}
+
+main {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+section {
+    margin-bottom: 2rem;
+    padding: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+h1, h2, h3 {
+    margin-top: 0;
+}
+
+hr {
+    border: 0;
+    border-top: 1px solid #eee;
+    margin: 2rem 0;
+}
+
+form div {
+    margin-bottom: 10px;
+}
+
+label {
+    display: inline-block;
+    width: 150px;
+}
+
+input[type="text"],
+input[type="number"] {
+    padding: 5px;
+    width: 200px;
+}
+
+button {
+    padding: 8px 15px;
+    border: none;
+    background-color: #007bff;
+    color: white;
+    border-radius: 3px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+
+.delete-btn {
+    background-color: #dc3545;
+}
+
+.delete-btn:hover {
+    background-color: #c82333;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1rem;
+}
+
+th, td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+}
+
+th {
+    background-color: #f2f2f2;
+}
+
+.scheduling-controls, .rr-controls {
+    margin-top: 1rem;
+}
+
+.rr-controls {
+    margin-top: 1.5rem;
+    padding-top: 1rem;
+    border-top: 1px solid #eee;
+}
+
+.rr-controls input {
+    width: 60px;
+    margin-right: 10px;
+}
+
+/* Estilos para el Gantt Chart */
+#resultsOutput {
+    margin-top: 1rem;
+}
+
+.gantt-chart {
+    display: flex;
+    flex-wrap: wrap;
+    border: 1px solid #ccc;
+    padding: 10px;
+    border-radius: 5px;
+}
+
+.gantt-block {
+    background-color: #007bff;
+    color: white;
+    padding: 10px;
+    margin: 5px;
+    border-radius: 3px;
+    text-align: center;
+    min-width: 60px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.gantt-block .process-name {
+    font-weight: bold;
+    display: block;
+}
+
+.gantt-block .time-frame {
+    font-size: 0.8em;
+    display: block;
+    margin-top: 5px;
+}
+
+.result-block {
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #eee;
+}
+
+.result-table {
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+}
+
+.result-table th, .result-table td {
+    text-align: center;
+}
+
+#resultsOutput p {
+    margin: 5px 0;
 }
