@@ -1,4 +1,4 @@
-
+// Módulo para gestionar el estado de la aplicación (la lista de procesos)
 const ProcessStore = {
     processes: [],
 
@@ -17,12 +17,13 @@ const ProcessStore = {
     }
 };
 
+// Módulo para gestionar la interfaz de usuario (DOM)
 const UIManager = {
     elements: {
         nameInput: document.getElementById('processName'),
         timeInput: document.getElementById('processTime'),
         priorityInput: document.getElementById('processPriority'),
-        addButton: document.getElementById('addButton'),
+        form: document.getElementById('addProcessForm'), // Changed from addButton
         tableBody: document.querySelector('#processTable tbody')
     },
 
@@ -53,6 +54,7 @@ const UIManager = {
     }
 };
 
+// Módulo principal que orquesta la aplicación
 const App = {
     init: function() {
         console.log("Planificador de procesos inicializado.");
@@ -60,11 +62,13 @@ const App = {
     },
 
     addEventListeners: function() {
-        UIManager.elements.addButton.addEventListener('click', this.handleAddProcess.bind(this));
+        // Listen for form submission instead of button click
+        UIManager.elements.form.addEventListener('submit', this.handleAddProcess.bind(this));
         UIManager.elements.tableBody.addEventListener('click', this.handleDeleteProcess.bind(this));
     },
 
-    handleAddProcess: function() {
+    handleAddProcess: function(event) {
+        event.preventDefault(); // Prevent page reload
         const { name, time, priority } = UIManager.getInputs();
 
         if (name && time && priority) {
@@ -74,6 +78,8 @@ const App = {
             UIManager.clearInputs();
             console.log('Procesos actuales:', ProcessStore.getProcesses());
         } else {
+            // This else block might not be necessary anymore because of the `required` attribute,
+            // but it's good for browsers that might not support it.
             alert('Por favor, complete todos los campos.');
         }
     },
