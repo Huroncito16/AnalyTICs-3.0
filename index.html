@@ -40,7 +40,54 @@
             />
           </div>
           <button type="submit" id="addButton">Agregar Proceso</button>
+          <button type="button" id="clearButton">Limpiar Todo</button>
         </form>
+        <!-- Modal para editar proceso -->
+        <div
+          id="editModal"
+          style="
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.4);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+          "
+        >
+          <div
+            style="
+              background: #fff;
+              padding: 2rem;
+              border-radius: 8px;
+              max-width: 350px;
+              margin: auto;
+              position: relative;
+            "
+          >
+            <h3>Editar Proceso</h3>
+            <form id="editProcessForm">
+              <div>
+                <label for="editName">Nombre:</label>
+                <input type="text" id="editName" required />
+              </div>
+              <div>
+                <label for="editTime">Tiempo:</label>
+                <input type="number" id="editTime" min="1" required />
+              </div>
+              <div>
+                <label for="editPriority">Prioridad:</label>
+                <input type="number" id="editPriority" min="1" required />
+              </div>
+              <input type="hidden" id="editIndex" />
+              <button type="submit">Guardar Cambios</button>
+              <button type="button" id="closeModal">Cancelar</button>
+            </form>
+          </div>
+        </div>
       </section>
 
       <hr />

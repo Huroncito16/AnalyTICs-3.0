@@ -1,7 +1,6 @@
-// Este array guardará todos los procesos. Es como una "base de datos" simple.
+
 let processes = [];
 
-// Unifica la lógica de cálculo para FCFS, SJF y Priority
 function calcularPlanificaciones() {
   // FCFS
   let arrayFCFS = [...processes];
@@ -55,7 +54,6 @@ function calcularPlanificaciones() {
   };
 }
 
-// Función para añadir un nuevo proceso a la lista.
 function addProcess() {
   // Obtiene los elementos del formulario directamente por su ID.
   const nameInput = document.getElementById("processName");
@@ -66,38 +64,30 @@ function addProcess() {
   const time = parseFloat(timeInput.value);
   const priority = parseFloat(priorityInput.value);
 
-  // Valida que los datos sean correctos.
   if (name === "" || isNaN(time) || isNaN(priority)) {
     alert("Por favor, ingresa datos válidos para el proceso.");
     return;
   }
 
-  // Crea un objeto simple para el nuevo proceso.
   const newProcess = {
     name: name,
     time: time,
     priority: priority,
   };
 
-  // Agrega el proceso al array.
   processes.push(newProcess);
 
-  // Limpia los campos del formulario.
   nameInput.value = "";
   timeInput.value = "";
   priorityInput.value = "";
   console.log(processes);
-  // Vuelve a dibujar la tabla para mostrar el nuevo proceso.
   renderTable();
 }
 
-// Función para dibujar la tabla en la página.
 function renderTable() {
   const tableBody = document.querySelector("#processTable tbody");
-  // Borra todo el contenido actual de la tabla.
   tableBody.innerHTML = "";
 
-  // Recorre el array de procesos y crea una fila para cada uno.
   for (let i = 0; i < processes.length; i++) {
     const p = processes[i];
     const row = tableBody.insertRow();
@@ -105,27 +95,25 @@ function renderTable() {
       <td>${p.name}</td>
       <td>${p.time}</td>
       <td>${p.priority}</td>
-      <td><button onclick="deleteProcess(${i})">Eliminar</button></td>
+      <td>
+        <button onclick="deleteProcess(${i})">Eliminar</button>
+        <button onclick="openEditModal(${i})">Editar</button>
+      </td>
     `;
   }
 }
 
-// Función para eliminar un proceso por su posición (índice).
 function deleteProcess(index) {
-  // Elimina un elemento del array en la posición especificada.
   processes.splice(index, 1);
-  // Vuelve a dibujar la tabla para que se actualice.
   renderTable();
 }
 
-// Escucha el evento 'submit' del formulario para añadir un proceso.
 const form = document.getElementById("addProcessForm");
 form.addEventListener("submit", function (event) {
-  event.preventDefault(); // Evita que la página se recargue.
+  event.preventDefault(); 
   addProcess();
 });
 
-// Listener para calcular FCFS, SJF y Priority juntos
 document.addEventListener("DOMContentLoaded", function () {
   renderTable();
   const btnAll = document.getElementById("calculateAllButton");
@@ -148,7 +136,44 @@ document.addEventListener("DOMContentLoaded", function () {
       mostrarResultadosRR(resultadoRR);
     });
   }
+  const clearButton = document.getElementById("clearButton");
+  if (clearButton) {
+    clearButton.addEventListener("click", function () {
+      processes = [];
+      renderTable();
+      const output = document.getElementById("resultsOutput");
+      if (output) output.innerHTML = "";
+    });
+  }
 });
+
+function openEditModal(index) {
+  const modal = document.getElementById("editModal");
+  const p = processes[index];
+  document.getElementById("editName").value = p.name;
+  document.getElementById("editTime").value = p.time;
+  document.getElementById("editPriority").value = p.priority;
+  document.getElementById("editIndex").value = index;
+  modal.style.display = "flex";
+}
+function closeEditModal() {
+  document.getElementById("editModal").style.display = "none";
+}
+document.getElementById("closeModal").addEventListener("click", closeEditModal);
+
+document
+  .getElementById("editProcessForm")
+  .addEventListener("submit", function (e) {
+    e.preventDefault();
+    const idx = parseInt(document.getElementById("editIndex").value);
+    processes[idx].name = document.getElementById("editName").value;
+    processes[idx].time = parseFloat(document.getElementById("editTime").value);
+    processes[idx].priority = parseFloat(
+      document.getElementById("editPriority").value
+    );
+    renderTable();
+    closeEditModal();
+  });
 
 // Función para mostrar los resultados de FCFS, SJF y Priority
 function mostrarResultados(resultados) {
@@ -181,16 +206,20 @@ function mostrarResultadosRR(resultado) {
 }
 
 function RR(quantum) {
-  let cola = [...processes];
+  // 🔥 Copia profunda para no modificar 'processes'
+  let cola = processes.map((p) => ({ ...p }));
+
   let espera = 0;
   let historial = [];
   let tiempoDeEjecucion;
   let esperaAcumulada = 0;
-  contador = 0;
+  let contador = 0;
+
   while (cola.length > 0) {
     tiempoDeEjecucion = Math.min(cola[0].time, quantum);
     cola[0].time -= tiempoDeEjecucion;
-    proceso = {
+
+    let proceso = {
       ronda: contador + 1,
       nombre: cola[0].name,
       tiempoAntes: cola[0].time + tiempoDeEjecucion,
@@ -199,21 +228,26 @@ function RR(quantum) {
       prioridad: cola[0].priority,
       esperaAcumulada: espera,
     };
+
     historial.push(proceso);
     espera += tiempoDeEjecucion;
+
     if (cola[0].time === 0) {
       cola.shift();
     } else {
       cola.push(cola.shift());
     }
+
     contador++;
     if (cola.length === 1) {
       espera = 0;
     }
   }
+
   for (let i = 0; i < historial.length; i++) {
     esperaAcumulada += historial[i].esperaAcumulada;
   }
+
   let promedioEspera = contador > 0 ? esperaAcumulada / contador : 0;
   return { historial: historial, promedio: promedioEspera };
 }
