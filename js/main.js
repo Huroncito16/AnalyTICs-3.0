@@ -206,21 +206,20 @@ function mostrarResultadosRR(resultado) {
 }
 
 function RR(quantum) {
-  // 🔥 Copia profunda para no modificar 'processes'
   let cola = processes.map((p) => ({ ...p }));
 
   let espera = 0;
   let historial = [];
   let tiempoDeEjecucion;
-  let esperaAcumulada = 0;
-  let contador = 0;
+  let ronda = 1;
+  //let esperaAcumulada = 0;
 
   while (cola.length > 0) {
     tiempoDeEjecucion = Math.min(cola[0].time, quantum);
     cola[0].time -= tiempoDeEjecucion;
 
     let proceso = {
-      ronda: contador + 1,
+      ronda: ronda,
       nombre: cola[0].name,
       tiempoAntes: cola[0].time + tiempoDeEjecucion,
       usado: tiempoDeEjecucion,
@@ -238,16 +237,24 @@ function RR(quantum) {
       cola.push(cola.shift());
     }
 
-    contador++;
     if (cola.length === 1) {
       espera = 0;
     }
+
+    ronda++;
   }
 
-  for (let i = 0; i < historial.length; i++) {
-    esperaAcumulada += historial[i].esperaAcumulada;
-  }
+  let sumaEspera = 0;
+  let divisor = 0;
 
-  let promedioEspera = contador > 0 ? esperaAcumulada / contador : 0;
-  return { historial: historial, promedio: promedioEspera };
+  historial.forEach((p, i) => {
+    sumaEspera += p.esperaAcumulada;
+    if (p.esperaAcumulada > 0 || i === 0) {
+      divisor++;
+    }
+  });
+
+  let promedioEspera = divisor > 0 ? sumaEspera / divisor : 0;
+
+  return { historial, promedio: promedioEspera };
 }
